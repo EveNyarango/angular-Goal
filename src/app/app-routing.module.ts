@@ -2,11 +2,17 @@ import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GoalComponent} from './goal/goal.component';
 import { AboutComponent } from './about/about.component';
-import { from } from 'rxjs';
-import { pathToFileURL } from 'url';
+// import { from } from 'rxjs';
+// import { pathToFileURL } from 'url';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { GoalDetailComponent } from './goal-details/goal-details.component';
+
 const routes: Routes = [
   { path: 'goals', component: GoalComponent},
   { path: 'about', component: AboutComponent},
+  { path: 'goals/:id', component: GoalDetailComponent },
+  { path:'**', component:NotFoundComponent},
+  { path: '', redirectTo:"/goals", pathMatch:"full"},
 ];
 
 @NgModule({

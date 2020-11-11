@@ -5,6 +5,7 @@ import { Goal } from '../goal';
 import { AlertService } from '../alert-service/alert.service';
 import { QuoteRequestService } from '../quote-http/quote-request.service';
 import { Quote } from '../quote-class/quote';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-goal',
@@ -14,40 +15,42 @@ import { Quote } from '../quote-class/quote';
 })
 export class GoalComponent implements OnInit {
   
-
+ 
   goals: Goal[];
   alertService: AlertService;
   quote: Quote;
 
-  toggleDetails(index) {
-    this.goals[index].showDescription = !this.goals[index].showDescription;
-  }
+  // toggleDetails(index) {
+  //   this.goals[index].showDescription = !this.goals[index].showDescription;
+  // }
   completeGoal(isComplete, index) {
     if (isComplete) {
       this.goals.splice(index, 1);
     }
   }
-  deleteGoal(isComplete, index) {
-    if (isComplete) {
-      let toDelete = confirm(`Are you sure you want to delete ${this.goals[index].name}?`)
+  goToUrl(id){
+    this.router.navigate(['/goals',id])
+  }
 
-      if (toDelete) {
-        this.goals.splice(index, 1)
-        this.alertService.alertMe("The goal has been deleted")
-      }
+  deleteGoal(index){
+    let toDelete = confirm(`Are you sure you want to delete ${this.goals[index].name}`)
+
+    if (toDelete){
+      this.goals.splice(index,1)
+      this.alertService.alertMe("Goal has been deleted")
     }
   }
+  
   addNewGoal(goal) {
     let goalLength = this.goals.length;
     goal.id = goalLength + 1;
     goal.completeDate = new Date(goal.completeDate)
     this.goals.push(goal)
   }
-  constructor(goalService: GoalService, alertService: AlertService, private quoteService: QuoteRequestService, private http:HttpClient) {
+  constructor(goalService: GoalService, alertService: AlertService, private quoteService: QuoteRequestService, private http:HttpClient,private router:Router) {
     this.goals = goalService.getGoals()
     this.alertService = alertService;
-    this.quoteService.quoteRequest()
-    this.quote = this.quoteService.quote
+   
   }
 
   ngOnInit() {
@@ -58,13 +61,13 @@ export class GoalComponent implements OnInit {
       quote: string;
     }
 
-    this.quoteService.quoteRequest()
-    this.quote = this.quoteService.quote,
 
     this.http.get<ApiResponse>("http://quotes.stormconsultancy.co.uk/random.json").subscribe(data=>{
       // Succesful API request
       this.quote = new Quote(data.author, data.quote)
     })
+    this.quoteService.quoteRequest()
+  this.quote = this.quoteService.quote
   }
-
+  
 }
